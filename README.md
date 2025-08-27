@@ -4,4 +4,4 @@
 
 📄 [Revisión 1 - Evidencia del Reto](./Revison1-EvidenciaReto.pdf)
 
-📄 [Revisión 2 - Evidencia del Reto](./Revison2-EvidenciaReto (2).pdf)
+[Revisión 2 - Evidencia del Reto](./docs/Revison2-EvidenciaReto%20(2).pdf)

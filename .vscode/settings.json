@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "evidenciaDrones.sln"
+    "dotnet.defaultSolution": "Avances-del-Reto-MAV-con-Multiagentes.sln"
 }

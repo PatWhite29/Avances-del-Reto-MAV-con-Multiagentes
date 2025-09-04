@@ -1,19 +1,42 @@
 using System;
 using UnityEngine;
 
+[System.Serializable]
+public class HatConfig
+{
+    public GameObject prefab;
+    public Vector3 localPosition = Vector3.zero;
+    public Vector3 localRotation = Vector3.zero; // En grados
+    public Vector3 localScale = Vector3.one;
+}
+
+[System.Serializable]
+public class AccessoryConfig
+{
+    //Variables para el inspector
+    public GameObject prefab;
+    public Vector3 localPosition = Vector3.zero;
+    public Vector3 localRotation = Vector3.zero; // En grados
+    public Vector3 localScale = Vector3.one;
+}
+
 public class NPCSpawner : MonoBehaviour
 {
     // Assets
     [Header("Assets para NPC")]
     public GameObject npcPrefab;
-    public GameObject[] hatPrefabs;
-    public GameObject[] accesoryPrefabs;
+    public HatConfig[] hatConfigs;
+    public AccessoryConfig[] accessoryConfigs;
     public Material[] materials;
 
     // Configuracion de spawn y spawn plane
     [Header("Configuración de Spawn")]
     public int numberOfNPC = 50;
     public GameObject spawnPlane;
+
+    // Opción para modo de compatibilidad con FBX problemáticos
+    [Header("Configuración FBX")]
+    public bool useFBXCompatibilityMode = true;
 
     void Start()
     {
@@ -49,10 +72,12 @@ public class NPCSpawner : MonoBehaviour
             }
 
             //Ponerles sombrerito
-            if (hatPrefabs.Length > 0)
+            if (hatConfigs.Length > 0)
             {
-                int hatIndex = UnityEngine.Random.Range(0, hatPrefabs.Length);
-                GameObject hat = Instantiate(hatPrefabs[hatIndex]);
+                int hatIndex = UnityEngine.Random.Range(0, hatConfigs.Length);
+                HatConfig selectedHat = hatConfigs[hatIndex];
+                
+                GameObject hat = Instantiate(selectedHat.prefab);
 
                 //Buscar el anclaje del sombrero
                 Transform hatAttachPoint = newNPC.transform.Find("HatAttachmentPoint");
@@ -60,33 +85,63 @@ public class NPCSpawner : MonoBehaviour
                 if (hatAttachPoint != null)
                 {
                     hat.transform.SetParent(hatAttachPoint);
-                    hat.transform.localPosition = Vector3.zero;
-                    hat.transform.localRotation = Quaternion.identity;
+                    
+                    if (useFBXCompatibilityMode)
+                    {
+                        // Modo compatibilidad: usar configuraciones manuales
+                        hat.transform.localPosition = selectedHat.localPosition;
+                        hat.transform.localRotation = Quaternion.Euler(selectedHat.localRotation);
+                        hat.transform.localScale = selectedHat.localScale;
+                    }
+                    else
+                    {
+                        // Modo estándar: resetear transformaciones
+                        hat.transform.localPosition = Vector3.zero;
+                        hat.transform.localRotation = Quaternion.identity;
+                        hat.transform.localScale = Vector3.one;
+                    }
                 }
                 else
                 {
                     Debug.LogError("No se encontró 'HatAttachmentPoint' en el NPC: " + newNPC.name);
+                    Destroy(hat); // Limpiar el objeto huérfano
                 }
             }
 
-            //Pomerle accesorios uwu
-            if (accesoryPrefabs.Length > 0)
+            //Ponerle accesorios uwu
+            if (accessoryConfigs.Length > 0)
             {
-                int accesoryIndex = UnityEngine.Random.Range(0, accesoryPrefabs.Length);
-                GameObject accesory = Instantiate(accesoryPrefabs[accesoryIndex]);
+                int accessoryIndex = UnityEngine.Random.Range(0, accessoryConfigs.Length);
+                AccessoryConfig selectedAccessory = accessoryConfigs[accessoryIndex];
+                
+                GameObject accessory = Instantiate(selectedAccessory.prefab);
 
                 //Buscar anclaje de accesorio
-                Transform accesoryAttachPoint = newNPC.transform.Find("AccessoryAttachmentPoint");
+                Transform accessoryAttachPoint = newNPC.transform.Find("AccessoryAttachmentPoint");
 
-                if (accesoryAttachPoint != null)
+                if (accessoryAttachPoint != null)
                 {
-                    accesory.transform.SetParent(accesoryAttachPoint);
-                    accesory.transform.localPosition = Vector3.zero;
-                    accesory.transform.localRotation = Quaternion.identity;
+                    accessory.transform.SetParent(accessoryAttachPoint);
+                    
+                    if (useFBXCompatibilityMode)
+                    {
+                        // Modo compatibilidad: usar configuraciones manuales
+                        accessory.transform.localPosition = selectedAccessory.localPosition;
+                        accessory.transform.localRotation = Quaternion.Euler(selectedAccessory.localRotation);
+                        accessory.transform.localScale = selectedAccessory.localScale;
+                    }
+                    else
+                    {
+                        // Modo estándar: resetear transformaciones
+                        accessory.transform.localPosition = Vector3.zero;
+                        accessory.transform.localRotation = Quaternion.identity;
+                        accessory.transform.localScale = Vector3.one;
+                    }
                 }
                 else
                 {
                     Debug.LogError("No se encontró 'AccessoryAttachmentPoint' en el NPC: " + newNPC.name);
+                    Destroy(accessory); // Limpiar el objeto huérfano
                 }
             }
         }

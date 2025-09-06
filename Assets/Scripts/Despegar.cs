@@ -27,6 +27,11 @@ public class Despegar : MonoBehaviour
     public float margenBorde = 2f;           // margen desde los bordes del área
     public bool autoEjeMasLargo = true;      // usa el eje X/Z más largo del BoxCollider
 
+    [Header("Búsqueda libre (aleatoria)")]
+    public bool busquedaLibre = true;        // moverse en cualquier dirección escogiendo puntos aleatorios
+    public float radioBusquedaLibre = 40f;   // usado si no hay patrolArea
+    public float cambiarDestinoCada = 5f;    // segundos entre cambios de rumbo
+
     [Header("Detección")]
     public float radioDeteccion = 60f;
     [Range(1f,179f)] public float fovGrados = 70f;
@@ -39,6 +44,13 @@ public class Despegar : MonoBehaviour
     [Header("Debug")]
     public bool dibujarGizmos = true;
 
+    [Header("Detección por atributos")]
+    public bool usarDeteccion = true; // habilita detección basada en descriptores
+    public AttributeDetector detector;           // detector basado en PersonDescriptor
+    public float actualizarObjetivoCada = 0.3f;
+    private float tUltimaAct = -999f;
+    private Transform marcadorObjetivo;
+
     // internos
     private Estado estado = Estado.Idle;
     private Vector3 origen;
@@ -49,6 +61,8 @@ public class Despegar : MonoBehaviour
     private Vector3[] puntos = new Vector3[2];
     private int idxObjetivo = 0;
     private Vector3 puntoAterrizaje;
+    private Vector3 destinoLibre;
+    private float tUltimoCambioDestino = -999f;
 
     void Start()
     {
@@ -66,8 +80,30 @@ public class Despegar : MonoBehaviour
         // Humano
         cacheHumano = humano != null ? humano : GameObject.FindGameObjectWithTag("Humano")?.transform;
 
-        // Configurar ruta A-B
-        ConfigurarRutaAB();
+        if (usarDeteccion)
+        {
+            if (detector == null) detector = FindObjectOfType<AttributeDetector>();
+            // Crear marcador para apuntar a detecciones si no hay un Transform físico
+            GameObject go = new GameObject("ObjetivoDeteccion");
+            go.hideFlags = HideFlags.HideInHierarchy;
+            marcadorObjetivo = go.transform;
+
+            // Intentar fijar objetivo desde el inicio usando el prompt
+            if (detector != null && detector.TryFindBestMatchingPerson(out Transform inicial, detector.confidenceThreshold))
+            {
+                cacheHumano = inicial; // el dron ya sabe a quién buscar
+            }
+        }
+
+        // Configurar patrulla o búsqueda libre
+        if (busquedaLibre)
+        {
+            ElegirNuevoDestinoLibre(true);
+        }
+        else
+        {
+            ConfigurarRutaAB();
+        }
 
         estado = Estado.Takeoff;
     }
@@ -77,7 +113,7 @@ public class Despegar : MonoBehaviour
         switch (estado)
         {
             case Estado.Takeoff:   ActualizarTakeoff(); break;
-            case Estado.Patrol:    ActualizarPatrullaAB(); BuscarHumano(); break;
+            case Estado.Patrol:    if (busquedaLibre) ActualizarBusquedaLibre(); else ActualizarPatrullaAB(); BuscarHumano(); break;
             case Estado.Approach:  ActualizarApproach(); break;
             case Estado.Land:      ActualizarLand(); break;
             case Estado.Landed:    break;
@@ -132,7 +168,7 @@ public class Despegar : MonoBehaviour
         Vector3 destino = new Vector3(transform.position.x, yObjetivo, transform.position.z);
         MoverHacia(destino, velAscenso);
         if (Mathf.Abs(transform.position.y - yObjetivo) <= epsAltura)
-            estado = Estado.Patrol;
+            estado = (cacheHumano != null) ? Estado.Approach : Estado.Patrol;
     }
 
     // Patrulla ida/vuelta A<->B
@@ -145,6 +181,42 @@ public class Despegar : MonoBehaviour
         Vector2 b = new Vector2(objetivo.x, objetivo.z);
         if (Vector2.Distance(a, b) <= epsPos)
             idxObjetivo = 1 - idxObjetivo; // cambiar extremo
+    }
+
+    // Patrulla aleatoria (moverse en cualquier dirección)
+    void ActualizarBusquedaLibre()
+    {
+        // cambiar destino por tiempo o cercanía
+        bool porTiempo = (Time.time - tUltimoCambioDestino) >= cambiarDestinoCada;
+        bool porCercania = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(destinoLibre.x, destinoLibre.z)) <= epsPos;
+        if (porTiempo || porCercania)
+            ElegirNuevoDestinoLibre(false);
+
+        Vector3 objetivo = new Vector3(destinoLibre.x, yObjetivo, destinoLibre.z);
+        MoverHacia(objetivo, velCrucero);
+    }
+
+    void ElegirNuevoDestinoLibre(bool forzar)
+    {
+        destinoLibre = PuntoAleatorioEnArea();
+        tUltimoCambioDestino = Time.time;
+    }
+
+    Vector3 PuntoAleatorioEnArea()
+    {
+        if (patrolArea != null)
+        {
+            Bounds b = patrolArea.bounds;
+            float x = Random.Range(b.min.x + margenBorde, b.max.x - margenBorde);
+            float z = Random.Range(b.min.z + margenBorde, b.max.z - margenBorde);
+            return new Vector3(x, yObjetivo, z);
+        }
+        else
+        {
+            // círculo alrededor del origen
+            Vector2 r = Random.insideUnitCircle * Mathf.Max(1f, radioBusquedaLibre);
+            return new Vector3(origen.x + r.x, yObjetivo, origen.z + r.y);
+        }
     }
 
     void ActualizarApproach()
@@ -190,6 +262,23 @@ public class Despegar : MonoBehaviour
     // ---------- Detección ----------
     void BuscarHumano()
     {
+        // Primero intentar con el detector por atributos
+        if (usarDeteccion && Time.time - tUltimaAct >= actualizarObjetivoCada)
+        {
+            tUltimaAct = Time.time;
+            if (detector != null && detector.TryGetNearestTargetPoint(nivelSueloOrigen, out Vector3 punto))
+            {
+                if (marcadorObjetivo != null)
+                {
+                    marcadorObjetivo.position = punto;
+                    cacheHumano = marcadorObjetivo;
+                    estado = Estado.Approach; // saltar a aproximación en cuanto hay match
+                    return;
+                }
+            }
+        }
+
+        // Fallback por etiqueta si no hay detección
         if (cacheHumano == null)
         {
             cacheHumano = GameObject.FindGameObjectWithTag("Humano")?.transform;
@@ -243,6 +332,12 @@ public class Despegar : MonoBehaviour
         {
             Gizmos.color = new Color(0,1,0,0.2f);
             Gizmos.DrawWireCube(patrolArea.bounds.center, patrolArea.bounds.size);
+        }
+        else if (busquedaLibre)
+        {
+            // radio de búsqueda libre
+            Gizmos.color = new Color(0,0,1,0.2f);
+            Gizmos.DrawWireSphere(Application.isPlaying ? origen : transform.position, radioBusquedaLibre);
         }
     }
 

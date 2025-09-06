@@ -119,6 +119,38 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &52585577 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4913669764270240754, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+  m_PrefabInstance: {fileID: 664373916}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &52585580 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5727184757609457992, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+  m_PrefabInstance: {fileID: 664373916}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &52585581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 52585577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8c46077fa5504999aed844ed6f27d99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  perceptionCamera: {fileID: 915935857}
+  drone: {fileID: 52585580}
+  detectionRadius: 120
+  fovDegrees: 80
+  occluders:
+    serializedVersion: 2
+    m_Bits: 0
+  groundY: 0
+  confidenceThreshold: 0.3
+  missionQuery: Persona Rosa con gorro de navidad
 --- !u!1001 &664373916
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -176,6 +208,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2888093266609275681, guid: c57e71bb4674c4972be702ec96638c8b, type: 3}
     - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      propertyPath: detector
+      value: 
+      objectReference: {fileID: 52585581}
+    - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
       propertyPath: patrolArea
       value: 
       objectReference: {fileID: 2040159544}
@@ -186,7 +222,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4913669764270240754, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 52585581}
   m_SourcePrefab: {fileID: 100100000, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
 --- !u!1001 &674813100
 PrefabInstance:
@@ -255,7 +294,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4913669764270240754, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1325377865}
   m_SourcePrefab: {fileID: 100100000, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
 --- !u!1001 &832034317
 PrefabInstance:
@@ -324,8 +366,16 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4913669764270240754, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1227510295}
   m_SourcePrefab: {fileID: 100100000, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+--- !u!20 &915935857 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 7906769483136693787, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+  m_PrefabInstance: {fileID: 664373916}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &923172302
 GameObject:
   m_ObjectHideFlags: 0
@@ -466,6 +516,87 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1171107221
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1171107223}
+  - component: {fileID: 1171107222}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1171107222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1171107221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6b523111b1448c6bdfa0de43b64692, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  autoRefreshOnStart: 1
+  includeInactive: 1
+  groupByDescriptor: 1
+  logToConsole: 1
+  report: 
+--- !u!4 &1171107223
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1171107221}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 237.72604, y: 0, z: 1.8375397}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1227510291 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4913669764270240754, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+  m_PrefabInstance: {fileID: 832034317}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1227510294 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5727184757609457992, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+  m_PrefabInstance: {fileID: 832034317}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1227510295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1227510291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8c46077fa5504999aed844ed6f27d99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  perceptionCamera: {fileID: 2067437513}
+  drone: {fileID: 1227510294}
+  detectionRadius: 120
+  fovDegrees: 80
+  occluders:
+    serializedVersion: 2
+    m_Bits: 0
+  groundY: 0
+  confidenceThreshold: 0.3
+  missionQuery: Persona Rosa con gorro de navidad
 --- !u!1 &1323906932
 GameObject:
   m_ObjectHideFlags: 0
@@ -603,6 +734,38 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!1 &1325377861 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4913669764270240754, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+  m_PrefabInstance: {fileID: 674813100}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1325377864 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5727184757609457992, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+  m_PrefabInstance: {fileID: 674813100}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1325377865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1325377861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8c46077fa5504999aed844ed6f27d99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  perceptionCamera: {fileID: 2067437513}
+  drone: {fileID: 1325377864}
+  detectionRadius: 120
+  fovDegrees: 80
+  occluders:
+    serializedVersion: 2
+    m_Bits: 0
+  groundY: 0
+  confidenceThreshold: 0.3
+  missionQuery: Persona Rosa con gorro de navidad
 --- !u!1 &1520075630
 GameObject:
   m_ObjectHideFlags: 0
@@ -855,6 +1018,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 10, y: 2.220446e-16, z: 10}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!20 &2067437513 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 7906769483136693787, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+  m_PrefabInstance: {fileID: 674813100}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -866,3 +1034,4 @@ SceneRoots:
   - {fileID: 664373916}
   - {fileID: 832034317}
   - {fileID: 674813100}
+  - {fileID: 1171107223}

@@ -62,6 +62,14 @@ public class NPCSpawner : MonoBehaviour
             //Crear NPCs
             GameObject newNPC = Instantiate(npcPrefab, randomSpawnPosition, npcPrefab.transform.rotation);
 
+            // Asegurar etiqueta para detección emulada
+            try { newNPC.tag = "Person"; } catch { /* si la tag no existe o es inválida */ }
+
+            // Asegurar descriptor de persona para características aleatorias
+            var descriptor = newNPC.GetComponent<PersonDescriptor>();
+            if (descriptor == null) descriptor = newNPC.AddComponent<PersonDescriptor>();
+            descriptor.randomizeOnStart = true;
+
             //Personalizar NPC
             int materialIndex = UnityEngine.Random.Range(0, materials.Length);
             Renderer npcRenderer = newNPC.GetComponentInChildren<Renderer>();

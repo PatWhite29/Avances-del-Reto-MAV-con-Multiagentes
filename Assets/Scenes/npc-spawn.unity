@@ -407,18 +407,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   npcPrefab: {fileID: 2548827565590698395, guid: c57e71bb4674c4972be702ec96638c8b, type: 3}
   hatConfigs:
-  - prefab: {fileID: 8840672247441283585, guid: 4f4343ab9e83246cdbde68161da03b74, type: 3}
-    localPosition: {x: 0, y: 0.4, z: -41.2}
-    localRotation: {x: 90, y: 0, z: 0}
-    localScale: {x: 8.0763, y: 8.0763, z: 8.0763}
   - prefab: {fileID: 8068639144130029597, guid: c2dea1228e0ce4ae28c1dc897963432e, type: 3}
     localPosition: {x: -0.3, y: -0.6, z: 6.5}
     localRotation: {x: 90, y: 0, z: 0}
     localScale: {x: 3.47042, y: 3.47042, z: 3.47042}
-  - prefab: {fileID: 3145005501883092196, guid: d65992f043f7e42538582d8735a75801, type: 3}
-    localPosition: {x: 0, y: -0.8, z: 1.5}
-    localRotation: {x: 0, y: 0, z: 0}
-    localScale: {x: 204.3, y: 204.3, z: 204.3}
   - prefab: {fileID: 5140717654454804549, guid: 8135e4a7c2f794b04a84895f60a48cf0, type: 3}
     localPosition: {x: 0, y: -0.96, z: 3.9}
     localRotation: {x: 0, y: 0, z: 0}
@@ -427,22 +419,6 @@ MonoBehaviour:
     localPosition: {x: 0, y: 0, z: -2.6}
     localRotation: {x: 0, y: 0, z: 0}
     localScale: {x: 707.49, y: 707.49, z: 707.49}
-  - prefab: {fileID: 2968665626641361502, guid: e8f7671f7a0e548a99c565cec6db1c4a, type: 3}
-    localPosition: {x: 0, y: -0.8, z: -1.3}
-    localRotation: {x: 0, y: 0, z: 0}
-    localScale: {x: 1248.17, y: 1248.17, z: 1248.17}
-  - prefab: {fileID: 3631284221006448641, guid: e84c5dcc117f24f68a2e45c80d4ca612, type: 3}
-    localPosition: {x: 0, y: -0.5, z: -3.7}
-    localRotation: {x: 90, y: 0, z: 0}
-    localScale: {x: 8.45, y: 8.45, z: 8.45}
-  - prefab: {fileID: 1156437568556512441, guid: 5e8fad0539a764d1da8996dfd6890730, type: 3}
-    localPosition: {x: 0, y: -0.79, z: 5.53}
-    localRotation: {x: 0, y: 0, z: 0}
-    localScale: {x: 3.11579, y: 3.11579, z: 3.11579}
-  - prefab: {fileID: 6193433748668801839, guid: 999a82d0c7a5e4fa996cc69d3d60d0fe, type: 3}
-    localPosition: {x: 0, y: 0, z: 7.9}
-    localRotation: {x: 0, y: 0, z: 0}
-    localScale: {x: 1000, y: 1000, z: 1000}
   - prefab: {fileID: 6193433748668801839, guid: 999a82d0c7a5e4fa996cc69d3d60d0fe, type: 3}
     localPosition: {x: 0, y: 0, z: 7.9}
     localRotation: {x: 0, y: 0, z: 0}
@@ -452,30 +428,10 @@ MonoBehaviour:
     localPosition: {x: 13, y: 63.5, z: -36.6}
     localRotation: {x: 57.259, y: -23.546, z: -110.129}
     localScale: {x: 9370.91, y: 9370.91, z: 9370.91}
-  - prefab: {fileID: 8096313243130691656, guid: 4e887d2d369bf48ddb62bf4afef793ad, type: 3}
-    localPosition: {x: 0, y: 0, z: -34.1}
-    localRotation: {x: 0, y: 0, z: 90}
-    localScale: {x: 505, y: 505, z: 505}
-  - prefab: {fileID: 234837362234439773, guid: 038267624a90046e8834a42c3da568ee, type: 3}
-    localPosition: {x: 1.5, y: 0, z: -40.9}
-    localRotation: {x: -10.526, y: -90, z: -90}
-    localScale: {x: 36.567, y: 36.567, z: 36.567}
   - prefab: {fileID: 4642331042769096026, guid: 75d4d2bda25514efcb8f27fdddafab96, type: 3}
     localPosition: {x: -4.3, y: 0, z: -9.9}
     localRotation: {x: 179.95, y: -77.01, z: -0.205}
     localScale: {x: 4298.4, y: 4298.4, z: 4298.4}
-  - prefab: {fileID: 7124419505917463089, guid: 4fc6853b6c9e1492c9feb35546dddfac, type: 3}
-    localPosition: {x: 0, y: -13.6, z: 4}
-    localRotation: {x: 73.576, y: 0, z: 0}
-    localScale: {x: 8.9598, y: 8.9598, z: 8.9598}
-  - prefab: {fileID: 8038460867382419303, guid: eb7a402dcce724157968112e11ccf557, type: 3}
-    localPosition: {x: 0, y: 7.6, z: -4}
-    localRotation: {x: 155.897, y: 0, z: 0}
-    localScale: {x: 4.14327, y: 4.14327, z: 4.14327}
-  - prefab: {fileID: 6227056513218096503, guid: 20bc52f28a5d04bcca74a28dfef0bc65, type: 3}
-    localPosition: {x: 13.5, y: 3.7, z: -1.3}
-    localRotation: {x: -56.83, y: -124.96, z: -141.69}
-    localScale: {x: 31.057, y: 31.057, z: 31.057}
   - prefab: {fileID: 926334232144592356, guid: 95efdd94e7f1748ce869793bb4e450c9, type: 3}
     localPosition: {x: 0, y: -4, z: -4.5}
     localRotation: {x: 0, y: -90, z: -164.09}
@@ -484,21 +440,12 @@ MonoBehaviour:
     localPosition: {x: 0.4, y: -18.6, z: 7}
     localRotation: {x: 69.411, y: 0, z: 0}
     localScale: {x: 213.34, y: 213.34, z: 213.34}
-  - prefab: {fileID: 8337062097625331255, guid: 64a1761d9585b4d30b2e3a1d813cc5a8, type: 3}
-    localPosition: {x: 0.4, y: -18.6, z: 7}
-    localRotation: {x: 69.411, y: 0, z: 0}
-    localScale: {x: 213.34, y: 213.34, z: 213.34}
   materials:
   - {fileID: 2100000, guid: de148464e42f94ed1bf8af2b893b40a1, type: 2}
   - {fileID: 2100000, guid: 672fcb74ba4684573a1b06ee656589b5, type: 2}
-  - {fileID: 2100000, guid: d3704d47cfa6a4d8bbfd71ecda325927, type: 2}
-  - {fileID: 2100000, guid: 741551ddfa5d846e2ae63146c2c41e75, type: 2}
-  - {fileID: 2100000, guid: fc78622a43d704f6489e234d5cf09b64, type: 2}
   - {fileID: 2100000, guid: 912b3ca5b5c46484aa70ff64e909c3df, type: 2}
-  - {fileID: 2100000, guid: f216a9896763f46669d129e7d44fecde, type: 2}
-  - {fileID: 2100000, guid: 46fc993c5f1af439998dd6727ddb023a, type: 2}
   - {fileID: 2100000, guid: 5f955beae450a4844ad9385b21bc3f4c, type: 2}
-  numberOfNPC: 50
+  numberOfNPC: 100
   spawnPlane: {fileID: 2040159539}
   useFBXCompatibilityMode: 1
 --- !u!4 &923172304

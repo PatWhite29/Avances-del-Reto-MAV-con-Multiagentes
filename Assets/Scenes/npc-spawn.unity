@@ -445,7 +445,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 672fcb74ba4684573a1b06ee656589b5, type: 2}
   - {fileID: 2100000, guid: 912b3ca5b5c46484aa70ff64e909c3df, type: 2}
   - {fileID: 2100000, guid: 5f955beae450a4844ad9385b21bc3f4c, type: 2}
-  numberOfNPC: 100
+  numberOfNPC: 60
   spawnPlane: {fileID: 2040159539}
   useFBXCompatibilityMode: 1
 --- !u!4 &923172304

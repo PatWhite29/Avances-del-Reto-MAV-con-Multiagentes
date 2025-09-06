@@ -34,6 +34,44 @@ public class NPCConfiguration
         hatIndex = hat;
         accessoryIndex = acc;
     }
+    
+    // Método para comparar configuraciones
+    public bool Equals(NPCConfiguration other)
+    {
+        if (other == null) return false;
+        return materialIndex == other.materialIndex && 
+               hatIndex == other.hatIndex && 
+               accessoryIndex == other.accessoryIndex;
+    }
+    
+    // Override para debug más fácil
+    public override string ToString()
+    {
+        return $"Material:{materialIndex}, Hat:{hatIndex}, Accessory:{accessoryIndex}";
+    }
+}
+
+// Clase para almacenar información completa de cada NPC spawneado
+[System.Serializable]
+public class SpawnedNPCData
+{
+    public GameObject npcGameObject;
+    public NPCConfiguration configuration;
+    public Vector3 position;
+    public int npcID; // ID único para identificar el NPC
+    
+    public SpawnedNPCData(GameObject npc, NPCConfiguration config, Vector3 pos, int id)
+    {
+        npcGameObject = npc;
+        configuration = config;
+        position = pos;
+        npcID = id;
+    }
+    
+    public override string ToString()
+    {
+        return $"NPC_{npcID}: {configuration} at {position}";
+    }
 }
 
 public class NPCSpawner : MonoBehaviour
@@ -53,6 +91,13 @@ public class NPCSpawner : MonoBehaviour
     // Opción para modo de compatibilidad con FBX problemáticos
     [Header("Configuración FBX")]
     public bool useFBXCompatibilityMode = true;
+    
+    // Lista de todos los NPCs spawneados - ACCESIBLE DESDE OTROS SCRIPTS
+    [Header("Debug Info")]
+    [SerializeField] private List<SpawnedNPCData> spawnedNPCs = new List<SpawnedNPCData>();
+    
+    // Propiedad pública para acceder a la lista desde otros scripts
+    public List<SpawnedNPCData> SpawnedNPCs { get { return spawnedNPCs; } }
 
     void Start()
     {
@@ -88,6 +133,9 @@ public class NPCSpawner : MonoBehaviour
 
             //Crear NPC
             GameObject newNPC = Instantiate(npcPrefab, randomSpawnPosition, npcPrefab.transform.rotation);
+            
+            // Darle un nombre único al NPC
+            newNPC.name = $"NPC_{i:000}";
 
             // Asegurar etiqueta para detección emulada
             try { newNPC.tag = "Person"; } catch { /* si la tag no existe o es inválida */ }
@@ -99,7 +147,15 @@ public class NPCSpawner : MonoBehaviour
 
             // Aplicar configuración única a este NPC
             ApplyConfigurationToNPC(newNPC, allConfigurations[i]);
+            
+            // AGREGAR A LA LISTA: Crear registro del NPC spawneado
+            SpawnedNPCData npcData = new SpawnedNPCData(newNPC, allConfigurations[i], randomSpawnPosition, i);
+            spawnedNPCs.Add(npcData);
+            
+            Debug.Log($"Spawned: {npcData}");
         }
+        
+        Debug.Log($"Total NPCs spawneados: {spawnedNPCs.Count}");
     }
 
     // Genera todas las combinaciones posibles de material, sombrero y accesorio
@@ -203,6 +259,86 @@ public class NPCSpawner : MonoBehaviour
                 Debug.LogError("No se encontró 'AccessoryAttachmentPoint' en el NPC: " + npc.name);
                 Destroy(accessory); // Limpiar el objeto huérfano
             }
+        }
+    }
+    
+    // MÉTODOS PÚBLICOS PARA EL SCRIPT DEL DRON
+    
+    /// <summary>
+    /// Encuentra todos los NPCs que coinciden con una configuración específica
+    /// </summary>
+    public List<SpawnedNPCData> FindNPCsByConfiguration(NPCConfiguration targetConfig)
+    {
+        List<SpawnedNPCData> matches = new List<SpawnedNPCData>();
+        
+        foreach(SpawnedNPCData npcData in spawnedNPCs)
+        {
+            if(npcData.configuration.Equals(targetConfig))
+            {
+                matches.Add(npcData);
+            }
+        }
+        
+        Debug.Log($"Encontrados {matches.Count} NPCs con configuración: {targetConfig}");
+        return matches;
+    }
+    
+    /// <summary>
+    /// Encuentra el NPC más cercano con una configuración específica
+    /// </summary>
+    public SpawnedNPCData FindClosestNPCByConfiguration(NPCConfiguration targetConfig, Vector3 fromPosition)
+    {
+        List<SpawnedNPCData> matches = FindNPCsByConfiguration(targetConfig);
+        
+        if(matches.Count == 0) 
+        {
+            Debug.LogWarning($"No se encontró ningún NPC con configuración: {targetConfig}");
+            return null;
+        }
+        
+        SpawnedNPCData closest = matches[0];
+        float closestDistance = Vector3.Distance(fromPosition, closest.position);
+        
+        foreach(SpawnedNPCData npcData in matches)
+        {
+            float distance = Vector3.Distance(fromPosition, npcData.position);
+            if(distance < closestDistance)
+            {
+                closest = npcData;
+                closestDistance = distance;
+            }
+        }
+        
+        Debug.Log($"NPC más cercano encontrado: {closest} a distancia {closestDistance}");
+        return closest;
+    }
+    
+    /// <summary>
+    /// Obtiene información de un NPC por su ID
+    /// </summary>
+    public SpawnedNPCData GetNPCByID(int npcID)
+    {
+        foreach(SpawnedNPCData npcData in spawnedNPCs)
+        {
+            if(npcData.npcID == npcID)
+            {
+                return npcData;
+            }
+        }
+        
+        Debug.LogWarning($"No se encontró NPC con ID: {npcID}");
+        return null;
+    }
+    
+    /// <summary>
+    /// Imprime todas las configuraciones spawneadas (útil para debug)
+    /// </summary>
+    public void PrintAllSpawnedNPCs()
+    {
+        Debug.Log("=== LISTA DE TODOS LOS NPCs SPAWNEADOS ===");
+        foreach(SpawnedNPCData npcData in spawnedNPCs)
+        {
+            Debug.Log(npcData.ToString());
         }
     }
 }

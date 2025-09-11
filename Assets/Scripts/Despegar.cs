@@ -16,7 +16,7 @@ public class Despegar : MonoBehaviour
 
     [Header("Velocidades")]
     public float velAscenso = 4f;
-    public float velCrucero = 7f;
+    public float velCrucero = 120f; // velocidad aumentada
     public float velDescenso = 3.5f;
     public float velGiro = 6f;
 
@@ -28,7 +28,7 @@ public class Despegar : MonoBehaviour
     public bool autoEjeMasLargo = true;      // usa el eje X/Z más largo del BoxCollider
 
     [Header("Búsqueda libre (aleatoria)")]
-    public bool busquedaLibre = true;        // moverse en cualquier dirección escogiendo puntos aleatorios
+    public bool busquedaLibre = false;        // moverse en cualquier dirección escogiendo puntos aleatorios
     public float radioBusquedaLibre = 40f;   // usado si no hay patrolArea
     public float cambiarDestinoCada = 5f;    // segundos entre cambios de rumbo
 
@@ -77,35 +77,34 @@ public class Despegar : MonoBehaviour
 
         yObjetivo = nivelSueloOrigen + alturaCrucero;
 
-        // Humano
-        cacheHumano = humano != null ? humano : GameObject.FindGameObjectWithTag("Humano")?.transform;
-
+        // Buscar objetivo del query automáticamente
+        cacheHumano = null;
         if (usarDeteccion)
         {
             if (detector == null) detector = FindObjectOfType<AttributeDetector>();
-            // Crear marcador para apuntar a detecciones si no hay un Transform físico
             GameObject go = new GameObject("ObjetivoDeteccion");
             go.hideFlags = HideFlags.HideInHierarchy;
             marcadorObjetivo = go.transform;
-
-            // Intentar fijar objetivo desde el inicio usando el prompt
             if (detector != null && detector.TryFindBestMatchingPerson(out Transform inicial, detector.confidenceThreshold))
             {
-                cacheHumano = inicial; // el dron ya sabe a quién buscar
+                cacheHumano = inicial;
             }
         }
 
-        // Configurar patrulla o búsqueda libre
-        if (busquedaLibre)
+        // Si encontró objetivo, ir directo a él
+        if (cacheHumano != null)
         {
-            ElegirNuevoDestinoLibre(true);
+            estado = Estado.Approach;
         }
         else
         {
-            ConfigurarRutaAB();
+            // Si no hay objetivo, patrulla normal
+            if (busquedaLibre)
+                ElegirNuevoDestinoLibre(true);
+            else
+                ConfigurarRutaAB();
+            estado = Estado.Takeoff;
         }
-
-        estado = Estado.Takeoff;
     }
 
     void Update()
@@ -179,8 +178,11 @@ public class Despegar : MonoBehaviour
 
         Vector2 a = new Vector2(transform.position.x, transform.position.z);
         Vector2 b = new Vector2(objetivo.x, objetivo.z);
+        // Si llega al extremo, cambiar al otro extremo
         if (Vector2.Distance(a, b) <= epsPos)
-            idxObjetivo = 1 - idxObjetivo; // cambiar extremo
+        {
+            idxObjetivo = 1 - idxObjetivo;
+        }
     }
 
     // Patrulla aleatoria (moverse en cualquier dirección)
@@ -262,43 +264,18 @@ public class Despegar : MonoBehaviour
     // ---------- Detección ----------
     void BuscarHumano()
     {
-        // Primero intentar con el detector por atributos
+        // Solo buscar por atributos, nunca usar fallback por etiqueta
         if (usarDeteccion && Time.time - tUltimaAct >= actualizarObjetivoCada)
         {
             tUltimaAct = Time.time;
-            if (detector != null && detector.TryGetNearestTargetPoint(nivelSueloOrigen, out Vector3 punto))
+            // Buscar el transform real del NPC que coincide con el query
+            if (detector != null && detector.TryFindBestMatchingPerson(out Transform npc, detector.confidenceThreshold))
             {
-                if (marcadorObjetivo != null)
-                {
-                    marcadorObjetivo.position = punto;
-                    cacheHumano = marcadorObjetivo;
-                    estado = Estado.Approach; // saltar a aproximación en cuanto hay match
-                    return;
-                }
+                cacheHumano = npc;
+                estado = Estado.Approach;
             }
         }
-
-        // Fallback por etiqueta si no hay detección
-        if (cacheHumano == null)
-        {
-            cacheHumano = GameObject.FindGameObjectWithTag("Humano")?.transform;
-            if (cacheHumano == null) return;
-        }
-
-        Vector3 toHumano = cacheHumano.position - transform.position;
-        float dist = toHumano.magnitude;
-        if (dist > radioDeteccion) return;
-
-        Vector3 forward = transform.forward; forward.y = 0f;
-        Vector3 plano = new Vector3(toHumano.x, 0f, toHumano.z);
-        float ang = Vector3.Angle(forward, plano);
-        if (ang > fovGrados * 0.5f) return;
-
-        if (Physics.Raycast(transform.position, toHumano.normalized, out RaycastHit hit, radioDeteccion, ~0))
-        {
-            if (hit.transform == cacheHumano || hit.transform.IsChildOf(cacheHumano))
-                estado = Estado.Approach;
-        }
+        // Si no hay detección, no hacer nada (no volver al origen)
     }
 
     // ---------- Util ----------

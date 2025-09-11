@@ -8,7 +8,7 @@ public class PersonDescriptor : MonoBehaviour
 {
     [Header("Atributos (se pueden randomizar en Start)")]
     public JacketColor jacketColor = JacketColor.Orange;
-    public HelmetColor helmet = HelmetColor.Yellow;
+    public HelmetColor  helmet = HelmetColor.Yellow;
 
     [Tooltip("Opcional: forzar aleatorizar en Start()")]
     public bool randomizeOnStart = true;

@@ -4,7 +4,7 @@ using UnityEngine;
 public class MissionPromptController : MonoBehaviour
 {
     [Header("Global Mission Prompt")]
-    [SerializeField] private string defaultMissionQuery = "person with orange jacket and yellow hard hat";
+    [SerializeField] private string defaultMissionQuery = "Material:2, Hat:2, Accessory:3";
     [SerializeField] private bool applyOnStart = true;
 
     [Header("Optional Runtime UI (IMGUI)")]

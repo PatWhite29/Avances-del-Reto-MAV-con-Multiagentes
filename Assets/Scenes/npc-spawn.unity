@@ -149,8 +149,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   groundY: 0
-  confidenceThreshold: 0.3
-  missionQuery: Persona Rosa con gorro de navidad
+  confidenceThreshold: 0.1
+  missionQuery: Material:2, Hat:2, Accessory:3
 --- !u!1001 &664373916
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -208,16 +208,44 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2888093266609275681, guid: c57e71bb4674c4972be702ec96638c8b, type: 3}
     - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      propertyPath: puntoA
+      value: 
+      objectReference: {fileID: 1161111576}
+    - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      propertyPath: puntoB
+      value: 
+      objectReference: {fileID: 1997941099}
+    - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
       propertyPath: detector
       value: 
       objectReference: {fileID: 52585581}
+    - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      propertyPath: fovGrados
+      value: 70
+      objectReference: {fileID: 0}
     - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
       propertyPath: patrolArea
       value: 
       objectReference: {fileID: 2040159544}
     - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      propertyPath: velCrucero
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
       propertyPath: alturaCrucero
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      propertyPath: busquedaLibre
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      propertyPath: radioDeteccion
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      propertyPath: radioBusquedaLibre
+      value: 40
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -288,8 +316,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2040159544}
     - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      propertyPath: velCrucero
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
       propertyPath: alturaCrucero
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      propertyPath: busquedaLibre
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -360,8 +396,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2040159544}
     - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      propertyPath: velCrucero
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
       propertyPath: alturaCrucero
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      propertyPath: busquedaLibre
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      propertyPath: radioBusquedaLibre
+      value: 40
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -445,9 +493,10 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 672fcb74ba4684573a1b06ee656589b5, type: 2}
   - {fileID: 2100000, guid: 912b3ca5b5c46484aa70ff64e909c3df, type: 2}
   - {fileID: 2100000, guid: 5f955beae450a4844ad9385b21bc3f4c, type: 2}
-  numberOfNPC: 60
+  numberOfNPC: 64
   spawnPlane: {fileID: 2040159539}
   useFBXCompatibilityMode: 1
+  spawnedNPCs: []
 --- !u!4 &923172304
 Transform:
   m_ObjectHideFlags: 0
@@ -458,6 +507,37 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -6.9884977, y: 4.352365, z: -1.1540337}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1161111575
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1161111576}
+  m_Layer: 0
+  m_Name: Punto A
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1161111576
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1161111575}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 233, y: 0, z: -4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -543,7 +623,7 @@ MonoBehaviour:
     m_Bits: 0
   groundY: 0
   confidenceThreshold: 0.3
-  missionQuery: Persona Rosa con gorro de navidad
+  missionQuery: Material:2, Hat:2, Accessory:3
 --- !u!1 &1323906932
 GameObject:
   m_ObjectHideFlags: 0
@@ -712,7 +792,7 @@ MonoBehaviour:
     m_Bits: 0
   groundY: 0
   confidenceThreshold: 0.3
-  missionQuery: Persona Rosa con gorro de navidad
+  missionQuery: Material:2, Hat:2, Accessory:3
 --- !u!1 &1520075630
 GameObject:
   m_ObjectHideFlags: 0
@@ -834,6 +914,37 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!1 &1997941098
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1997941099}
+  m_Layer: 0
+  m_Name: Punto B
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1997941099
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1997941098}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -233, y: 0, z: -4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2040159539
 GameObject:
   m_ObjectHideFlags: 0
@@ -982,3 +1093,5 @@ SceneRoots:
   - {fileID: 832034317}
   - {fileID: 674813100}
   - {fileID: 1171107223}
+  - {fileID: 1161111576}
+  - {fileID: 1997941099}

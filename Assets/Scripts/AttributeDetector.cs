@@ -10,13 +10,13 @@ public class AttributeDetector : MonoBehaviour
     public Transform drone;                // Transform del dron
 
     [Header("Búsqueda")]
-    public float detectionRadius = 120f;   // metros
-    public float fovDegrees = 80f;         // cono de visión
+    public float detectionRadius = 200f;   // metros
+    public float fovDegrees = 120f;        // cono de visión
     public LayerMask occluders;            // capas que tapan visión (edificios, etc.)
     public float groundY = 0f;             // plano del suelo para proyectar
 
     [Header("Filtro")]
-    public float confidenceThreshold = 0.30f;
+    public float confidenceThreshold = 0.1f;
     public string missionQuery = "person with orange jacket and yellow hard hat";
 
     // --- API pública compatible ---
@@ -116,41 +116,39 @@ public class AttributeDetector : MonoBehaviour
     float ComputeMatchScore(PersonDescriptor pd, string query)
     {
         string q = query.ToLowerInvariant();
-
-        // Coeficientes simples (ajústalos a tu gusto)
         float s = 0f;
-        if (q.Contains("person") || q.Contains("persona") || q.Contains("humano")) s += 0.3f;
 
-        // Señales de prenda específica
-        bool wantsHelmet = q.Contains("helmet") || q.Contains("casco");
-        bool mentionsJacket = q.Contains("jacket") || q.Contains("chaqueta") || q.Contains("chamarra") || q.Contains("chaleco");
+        // Buscar formato: Material:X, Hat:Y, Accessory:Z
+        int mat = -1, hat = -1, acc = -1;
+        System.Text.RegularExpressions.Match mMat = System.Text.RegularExpressions.Regex.Match(q, @"material\s*:?\s*(\d+)");
+        System.Text.RegularExpressions.Match mHat = System.Text.RegularExpressions.Regex.Match(q, @"hat\s*:?\s*(\d+)");
+        System.Text.RegularExpressions.Match mAcc = System.Text.RegularExpressions.Regex.Match(q, @"accessory\s*:?\s*(\d+)");
+        if (mMat.Success) int.TryParse(mMat.Groups[1].Value, out mat);
+        if (mHat.Success) int.TryParse(mHat.Groups[1].Value, out hat);
+        if (mAcc.Success) int.TryParse(mAcc.Groups[1].Value, out acc);
 
-        // Colores de chaqueta (si no se pide casco explícitamente o se menciona chaqueta)
-        if (!wantsHelmet || mentionsJacket)
+        // Obtener indices del NPC
+        int npcMat = -1, npcHat = -1, npcAcc = -1;
+        var npcObj = pd.gameObject;
+        var spawnerData = npcObj.GetComponent<NPCReference>();
+        if (spawnerData != null)
         {
-            if (q.Contains("orange") || q.Contains("naranja")) s += (pd.jacketColor == JacketColor.Orange) ? 0.7f : 0f;
-            else if (q.Contains("red") || q.Contains("rojo")) s += (pd.jacketColor == JacketColor.Red) ? 0.7f : 0f;
-            else if (q.Contains("blue") || q.Contains("azul")) s += (pd.jacketColor == JacketColor.Blue) ? 0.7f : 0f;
-            else if (q.Contains("green") || q.Contains("verde")) s += (pd.jacketColor == JacketColor.Green) ? 0.7f : 0f;
-            else if (q.Contains("yellow") || q.Contains("amarill")) s += (pd.jacketColor == JacketColor.Yellow) ? 0.7f : 0f; // amarilla/amarillo
-            else if (q.Contains("black") || q.Contains("negro")) s += (pd.jacketColor == JacketColor.Black) ? 0.7f : 0f;
+            npcMat = spawnerData.materialIndex;
+            npcHat = spawnerData.hatIndex;
+            npcAcc = spawnerData.accessoryIndex;
         }
 
-        // Casco
-        if (wantsHelmet)
-        {
-            if ((q.Contains("yellow") || q.Contains("amarill")) && pd.helmet == HelmetColor.Yellow) s += 0.4f;
-            else if ((q.Contains("white") || q.Contains("blanco")) && pd.helmet == HelmetColor.White) s += 0.4f;
-            else if ((q.Contains("orange") || q.Contains("naranja")) && pd.helmet == HelmetColor.Orange) s += 0.4f;
-            else if (!q.Contains("yellow") && !q.Contains("white") && !q.Contains("orange") && pd.helmet != HelmetColor.None) s += 0.3f;
-        }
-        else
-        {
-            if (q.Contains("no helmet") || q.Contains("sin casco"))
-                s += (pd.helmet == HelmetColor.None) ? 0.4f : 0f;
-        }
+        // Score: 1.0 si todos coinciden, 0.7 si dos, 0.4 si uno
+        int matches = 0;
+        if (mat >= 0 && npcMat == mat) matches++;
+        if (hat >= 0 && npcHat == hat) matches++;
+        if (acc >= 0 && npcAcc == acc) matches++;
 
-        // Normaliza a 0..1 (cap)
+        if (matches == 3) s = 1.0f;
+        else if (matches == 2) s = 0.7f;
+        else if (matches == 1) s = 0.4f;
+        else s = 0f;
+
         return Mathf.Clamp01(s);
     }
 

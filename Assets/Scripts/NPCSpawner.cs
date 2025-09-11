@@ -140,10 +140,18 @@ public class NPCSpawner : MonoBehaviour
             // Asegurar etiqueta para detección emulada
             try { newNPC.tag = "Person"; } catch { /* si la tag no existe o es inválida */ }
 
+
             // Asegurar descriptor de persona para características aleatorias
             var descriptor = newNPC.GetComponent<PersonDescriptor>();
             if (descriptor == null) descriptor = newNPC.AddComponent<PersonDescriptor>();
             descriptor.randomizeOnStart = true;
+
+            // Agregar y asignar NPCReference
+            var npcRef = newNPC.GetComponent<NPCReference>();
+            if (npcRef == null) npcRef = newNPC.AddComponent<NPCReference>();
+            npcRef.materialIndex = allConfigurations[i].materialIndex;
+            npcRef.hatIndex = allConfigurations[i].hatIndex;
+            npcRef.accessoryIndex = allConfigurations[i].accessoryIndex;
 
             // Aplicar configuración única a este NPC
             ApplyConfigurationToNPC(newNPC, allConfigurations[i]);

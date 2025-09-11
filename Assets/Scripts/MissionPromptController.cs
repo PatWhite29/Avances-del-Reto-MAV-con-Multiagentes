@@ -39,7 +39,7 @@ public class MissionPromptController : MonoBehaviour
     public void SetMissionQuery(string q)
     {
         if (q == null) q = string.Empty;
-        var detectors = FindObjectsOfType<AttributeDetector>(true);
+        var detectors = Object.FindObjectsByType<AttributeDetector>(FindObjectsSortMode.None);
         for (int i = 0; i < detectors.Length; i++)
         {
             if (detectors[i] != null)

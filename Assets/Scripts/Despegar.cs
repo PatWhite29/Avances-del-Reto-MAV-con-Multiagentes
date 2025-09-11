@@ -53,6 +53,10 @@ public class Despegar : MonoBehaviour
 
     // internos
     private Estado estado = Estado.Idle;
+    private int patrullaVueltas = 0;
+    [Header("Patrulla personalizada")]
+    public float patrullaOffset = 0f; // offset lateral único para cada dron
+    private int patrullaVueltasObjetivo = 1; // número de idas y vueltas antes de buscar
     private Vector3 origen;
     private float nivelSueloOrigen;
     private float yObjetivo;
@@ -77,45 +81,38 @@ public class Despegar : MonoBehaviour
 
         yObjetivo = nivelSueloOrigen + alturaCrucero;
 
-        // Buscar objetivo del query automáticamente
+        // Al iniciar, patrulla primero de A a B
+        patrullaVueltas = 0;
         cacheHumano = null;
-        if (usarDeteccion)
-        {
-            if (detector == null) detector = FindObjectOfType<AttributeDetector>();
-            GameObject go = new GameObject("ObjetivoDeteccion");
-            go.hideFlags = HideFlags.HideInHierarchy;
-            marcadorObjetivo = go.transform;
-            if (detector != null && detector.TryFindBestMatchingPerson(out Transform inicial, detector.confidenceThreshold))
-            {
-                cacheHumano = inicial;
-            }
-        }
-
-        // Si encontró objetivo, ir directo a él
-        if (cacheHumano != null)
-        {
-            estado = Estado.Approach;
-        }
+        if (busquedaLibre)
+            ElegirNuevoDestinoLibre(true);
         else
-        {
-            // Si no hay objetivo, patrulla normal
-            if (busquedaLibre)
-                ElegirNuevoDestinoLibre(true);
-            else
-                ConfigurarRutaAB();
-            estado = Estado.Takeoff;
-        }
+            ConfigurarRutaAB();
+        estado = Estado.Takeoff;
     }
 
     void Update()
     {
         switch (estado)
         {
-            case Estado.Takeoff:   ActualizarTakeoff(); break;
-            case Estado.Patrol:    if (busquedaLibre) ActualizarBusquedaLibre(); else ActualizarPatrullaAB(); BuscarHumano(); break;
-            case Estado.Approach:  ActualizarApproach(); break;
-            case Estado.Land:      ActualizarLand(); break;
-            case Estado.Landed:    break;
+            case Estado.Takeoff:
+                ActualizarTakeoff();
+                break;
+            case Estado.Patrol:
+                if (busquedaLibre)
+                    ActualizarBusquedaLibre();
+                else
+                    ActualizarPatrullaAB();
+                break;
+            case Estado.Approach:
+                ActualizarApproach();
+                break;
+            case Estado.Land:
+                ActualizarLand();
+                break;
+            case Estado.Landed:
+                // Ya no hace nada aquí, la transición ocurre en patrulla
+                break;
         }
     }
 
@@ -124,41 +121,38 @@ public class Despegar : MonoBehaviour
     {
         if (puntoA != null && puntoB != null)
         {
-            puntos[0] = new Vector3(puntoA.position.x, yObjetivo, puntoA.position.z);
-            puntos[1] = new Vector3(puntoB.position.x, yObjetivo, puntoB.position.z);
+            // Aplica offset lateral en Z para cada dron
+            puntos[0] = new Vector3(puntoA.position.x, yObjetivo, puntoA.position.z + patrullaOffset);
+            puntos[1] = new Vector3(puntoB.position.x, yObjetivo, puntoB.position.z + patrullaOffset);
             return;
         }
 
         if (patrolArea != null)
         {
-            // bounds en mundo
             Bounds b = patrolArea.bounds;
             Vector3 c = b.center;
             Vector3 half = b.extents;
-
-            // elegir eje más largo
             bool usarX = autoEjeMasLargo ? (b.size.x >= b.size.z) : true;
-
             if (usarX)
             {
                 float x0 = c.x - (half.x - margenBorde);
                 float x1 = c.x + (half.x - margenBorde);
-                puntos[0] = new Vector3(x0, yObjetivo, c.z);
-                puntos[1] = new Vector3(x1, yObjetivo, c.z);
+                puntos[0] = new Vector3(x0, yObjetivo, c.z + patrullaOffset);
+                puntos[1] = new Vector3(x1, yObjetivo, c.z + patrullaOffset);
             }
             else
             {
                 float z0 = c.z - (half.z - margenBorde);
                 float z1 = c.z + (half.z - margenBorde);
-                puntos[0] = new Vector3(c.x, yObjetivo, z0);
-                puntos[1] = new Vector3(c.x, yObjetivo, z1);
+                puntos[0] = new Vector3(c.x + patrullaOffset, yObjetivo, z0);
+                puntos[1] = new Vector3(c.x + patrullaOffset, yObjetivo, z1);
             }
             return;
         }
 
-        // fallback: 20 m a izquierda/derecha del origen
-        puntos[0] = new Vector3(origen.x - 20f, yObjetivo, origen.z);
-        puntos[1] = new Vector3(origen.x + 20f, yObjetivo, origen.z);
+        // fallback: 20 m a izquierda/derecha del origen, con offset
+        puntos[0] = new Vector3(origen.x - 20f, yObjetivo, origen.z + patrullaOffset);
+        puntos[1] = new Vector3(origen.x + 20f, yObjetivo, origen.z + patrullaOffset);
     }
 
     // ---------- Estados ----------
@@ -182,6 +176,15 @@ public class Despegar : MonoBehaviour
         if (Vector2.Distance(a, b) <= epsPos)
         {
             idxObjetivo = 1 - idxObjetivo;
+            patrullaVueltas++;
+            if (patrullaVueltas >= patrullaVueltasObjetivo)
+            {
+                if (detector != null && detector.TryFindBestMatchingPerson(out Transform npc, detector.confidenceThreshold))
+                {
+                    cacheHumano = npc;
+                    estado = Estado.Approach;
+                }
+            }
         }
     }
 
@@ -192,8 +195,18 @@ public class Despegar : MonoBehaviour
         bool porTiempo = (Time.time - tUltimoCambioDestino) >= cambiarDestinoCada;
         bool porCercania = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(destinoLibre.x, destinoLibre.z)) <= epsPos;
         if (porTiempo || porCercania)
+        {
             ElegirNuevoDestinoLibre(false);
-
+            patrullaVueltas++;
+            if (patrullaVueltas >= patrullaVueltasObjetivo)
+            {
+                if (detector != null && detector.TryFindBestMatchingPerson(out Transform npc, detector.confidenceThreshold))
+                {
+                    cacheHumano = npc;
+                    estado = Estado.Approach;
+                }
+            }
+        }
         Vector3 objetivo = new Vector3(destinoLibre.x, yObjetivo, destinoLibre.z);
         MoverHacia(objetivo, velCrucero);
     }
@@ -228,19 +241,15 @@ public class Despegar : MonoBehaviour
         Vector3 sobre = new Vector3(cacheHumano.position.x, yObjetivo, cacheHumano.position.z);
         MoverHacia(sobre, velCrucero);
 
+        // Aterrizaje exacto sobre el NPC del query
         if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z),
                              new Vector2(sobre.x, sobre.z)) <= 0.8f)
         {
-            Vector3 dir = (transform.position - sobre); dir.y = 0f;
-            if (dir.sqrMagnitude < 0.01f) dir = Random.insideUnitSphere;
-            dir.y = 0f; dir.Normalize();
-
-            Vector3 plano = cacheHumano.position + dir * offsetAterrizaje;
-
-            if (Physics.Raycast(plano + Vector3.up * 200f, Vector3.down, out RaycastHit hit, 500f, sueloMask))
+            // Raycast directo sobre el NPC para encontrar el suelo
+            if (Physics.Raycast(cacheHumano.position + Vector3.up * 200f, Vector3.down, out RaycastHit hit, 500f, sueloMask))
                 puntoAterrizaje = hit.point;
             else
-                puntoAterrizaje = new Vector3(plano.x, nivelSueloOrigen, plano.z);
+                puntoAterrizaje = new Vector3(cacheHumano.position.x, nivelSueloOrigen, cacheHumano.position.z);
 
             estado = Estado.Land;
         }

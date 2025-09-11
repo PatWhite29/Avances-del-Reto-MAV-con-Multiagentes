@@ -150,7 +150,7 @@ MonoBehaviour:
     m_Bits: 0
   groundY: 0
   confidenceThreshold: 0.1
-  missionQuery: Material:2, Hat:2, Accessory:3
+  missionQuery: Material:0, Hat:2, Accessory:3
 --- !u!1001 &664373916
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -312,6 +312,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2888093266609275681, guid: c57e71bb4674c4972be702ec96638c8b, type: 3}
     - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      propertyPath: detector
+      value: 
+      objectReference: {fileID: 1325377865}
+    - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
       propertyPath: patrolArea
       value: 
       objectReference: {fileID: 2040159544}
@@ -391,6 +395,10 @@ PrefabInstance:
       propertyPath: humano
       value: 
       objectReference: {fileID: 2888093266609275681, guid: c57e71bb4674c4972be702ec96638c8b, type: 3}
+    - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
+      propertyPath: detector
+      value: 
+      objectReference: {fileID: 1227510295}
     - target: {fileID: 8794050606810864340, guid: 49e063ab75c3c45da89b1a03ceb8dcee, type: 3}
       propertyPath: patrolArea
       value: 

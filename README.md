@@ -40,3 +40,7 @@ Proyecto Unity 2020+ (C#) para un reto de MAV multiagentes. La simulación integ
 📄 [Revisión 2 - Evidencia del Reto](./docs/Revison2-EvidenciaReto%20(2).pdf)
 
 📄 [Revisión 3 - Evidencia del Reto](./docs/Revison3-EvidenciaReto.pdf)
+
+📄 [Revisión Final - Evidencia del Reto](./docs/RevisonFinal-EvidenciaReto.pdf)
+
+📄 [Presentación del Reto](./docs/presentacion.pdf)
